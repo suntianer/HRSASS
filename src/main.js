@@ -8,13 +8,21 @@ import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 
 import '@/styles/index.scss' // global css
 
-import App from './App'     //入口视图组件
+import App from './App' // 入口视图组件
 import store from './store'
 import router from './router'
 
+import * as directives from '@/directives' // 注册自定义指令
+// console.log(Object.keys(directives))
+// 遍历注册 批量注册
+Object.keys(directives).forEach(item => {
+  // console.log(item)
+  // console.log(directives[item])
+  Vue.directive(item, directives[item])
+})
+
 import '@/icons' // icon
 import '@/permission' // permission control
-
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })

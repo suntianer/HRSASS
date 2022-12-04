@@ -71,6 +71,7 @@
 
 <script>
 import { validMobile } from '@/utils/validate'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Login',
@@ -119,6 +120,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['user/login']),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -130,24 +132,37 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.$store
-            .dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          console.log('error submit!!')
-          return false
+      // 传callback函数
+      this.$refs.loginForm.validate(async (isOk) => {
+        // isOk表示是否通过验证的结果
+        if (isOk) {
+          try {
+            this.loading = true
+            // 如果表单通过校验，就可以发起登录操作
+            await this.$store.dispatch('user/login', this.loginForm)
+            // this['user/login'](this.loginForm)
+            this.$router.push('/')
+          } catch (error) {
+            console.log(error)
+          } finally {
+            this.loading = false
+          }
         }
       })
     }
+
+    //   async handleLogin() {
+    //     try {
+    //       await this.$refs.loginForm.validate()
+    //       this.loading = true
+    //       await this.$store.dispatch('user/login', this.loginForm)
+    //       this.$router.push('/')
+    //     } catch (err) {
+    //       console.log(err)
+    //     } finally {
+    //       this.loading = false
+    //     }
+    //   }
   }
 }
 </script>
